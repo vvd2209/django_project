@@ -17,6 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# В корневом файле urls.py, который находится в директории с настройками проекта, необходимо
+# описать новый маршрут, но вместо контроллера указать специальную функцию include.
+# При этом в приложении catalog должен появиться файл urls.py,
+# и уже в нём можно описывать необходимые маршруты
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('catalog.urls'))
