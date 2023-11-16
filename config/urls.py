@@ -14,14 +14,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-# В корневом файле urls.py, который находится в директории с настройками проекта, необходимо
-# описать новый маршрут, но вместо контроллера указать специальную функцию include.
-# При этом в приложении catalog должен появиться файл urls.py,
-# и уже в нём можно описывать необходимые маршруты
+# Р’ РєРѕСЂРЅРµРІРѕРј С„Р°Р№Р»Рµ urls.py, РєРѕС‚РѕСЂС‹Р№ РЅР°С…РѕРґРёС‚СЃСЏ РІ РґРёСЂРµРєС‚РѕСЂРёРё СЃ РЅР°СЃС‚СЂРѕР№РєР°РјРё РїСЂРѕРµРєС‚Р°, РЅРµРѕР±С…РѕРґРёРјРѕ
+# РѕРїРёСЃР°С‚СЊ РЅРѕРІС‹Р№ РјР°СЂС€СЂСѓС‚, РЅРѕ РІРјРµСЃС‚Рѕ РєРѕРЅС‚СЂРѕР»Р»РµСЂР° СѓРєР°Р·Р°С‚СЊ СЃРїРµС†РёР°Р»СЊРЅСѓСЋ С„СѓРЅРєС†РёСЋ include.
+# РџСЂРё СЌС‚РѕРј РІ РїСЂРёР»РѕР¶РµРЅРёРё catalog РґРѕР»Р¶РµРЅ РїРѕСЏРІРёС‚СЊСЃСЏ С„Р°Р№Р» urls.py,
+# Рё СѓР¶Рµ РІ РЅС‘Рј РјРѕР¶РЅРѕ РѕРїРёСЃС‹РІР°С‚СЊ РЅРµРѕР±С…РѕРґРёРјС‹Рµ РјР°СЂС€СЂСѓС‚С‹
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('catalog.urls'))
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
