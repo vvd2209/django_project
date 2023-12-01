@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 # Create your models here.
 
@@ -15,6 +16,9 @@ class Category(models.Model):
         verbose_name = 'категория'
         verbose_name_plural = 'категории'
         ordering = ('name',)
+
+    # def get_absolute_url(self):
+    #     return reverse('catalog:products', kwargs={'pk':self.pk})
 
 class Product(models.Model):
     name = models.CharField(max_length=100, verbose_name='наименование')
