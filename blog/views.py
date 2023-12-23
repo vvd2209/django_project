@@ -18,10 +18,10 @@ class BlogCreateView(CreateView):
 
         return super().form_valid(form)
 
+
 class BlogUpdateView(UpdateView):
     model = Blog
     fields = ('title', 'body',)
-#    success_url = reverse_lazy('blog:list')
 
     def get_success_url(self):
         return reverse('blog:view', args=[self.kwargs.get('pk')])
@@ -30,6 +30,7 @@ class BlogUpdateView(UpdateView):
 class BlogDeleteView(DeleteView):
     model = Blog
     success_url = reverse_lazy('blog:list')
+
 
 def toggle_activity(request, pk):
     """ Отображает смену статуса статьи блога 'активно'/'неактивно'"""
@@ -43,14 +44,10 @@ def toggle_activity(request, pk):
 
     return redirect(reverse('blog:list'))
 
+
 class BlogListView(ListView):
     model = Blog
 
-    # def get_queryset(self, *args, **kwargs):
-    #     """ Отображает только опубликованные(активированные) статьи блога """
-    #     queryset = super().get_queryset(*args, **kwargs)
-    #     queryset = queryset.filter(is_publish=True)
-    #     return queryset
 
 class BlogDetailView(DetailView):
     model = Blog

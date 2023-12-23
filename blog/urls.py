@@ -7,11 +7,11 @@ app_name = BlogConfig.name
 
 
 urlpatterns = [
-    path('create/', BlogCreateView.as_view(), name='create'), # создать блог
-    path('', BlogListView.as_view(), name='list'), # блоги списком
-    path('view/<int:pk>/', BlogDetailView.as_view(), name='view'), # посмотреть блог
-    path('edit/<int:pk>/', BlogUpdateView.as_view(), name='edit'), # редактировать блог
-    path('delete/<int:pk>/', BlogDeleteView.as_view(), name='delete'), # удалить блог
-    path('activity/<int:pk>/', toggle_activity, name='toggle_activity'), # активация/деактивация блога
+    path('create/', BlogCreateView.as_view(), name='create'),
+    path('', BlogListView.as_view(), name='list'),
+    path('view/<int:pk>/', BlogDetailView.as_view(), name='view'),
+    path('edit/<int:pk>/', BlogUpdateView.as_view(), name='edit'),
+    path('delete/<int:pk>/', BlogDeleteView.as_view(), name='delete'),
+    path('activity/<int:pk>/', toggle_activity, name='toggle_activity'),
 
 ]

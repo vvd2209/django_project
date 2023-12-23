@@ -7,10 +7,6 @@ from catalog.forms import ProductForm, VersionForm
 from catalog.models import Category, Contacts, Product, Version
 
 
-# Create your views here.
-
-# ���������� == ������� def Contacts()
-# ���������� request, ��� �������� ���� � ���, ��� ����� �����, ������ ������ � ��
 def contacts(request):
     context = {
         'object_list': Contacts.objects.all(),
@@ -24,7 +20,7 @@ def contacts(request):
     return render(request, 'catalog/contacts.html', context)
 
 
-class Main_pageListView(ListView):
+class MainPageListView(ListView):
     model = Product
     template_name = 'catalog/main_page.html'
     extra_context = {
@@ -32,34 +28,12 @@ class Main_pageListView(ListView):
         'object_list': Category.objects.all()[:4]
     }
 
-# def main_page(request):
-#     context = {
-#         'object_list': Category.objects.all()[:4],
-#         'title': 'Bakery Market'
-#     }
-#     return render(request, 'catalog/main_page.html', context)
-
-#def categories(request):
-#    context = {
-#        'object_list': Category.objects.all(),
-#        'title': 'Наши вкусняши'
-#    }
-#    return render(request, 'catalog/category_list.html', context)
-
 
 class CategoryListView(ListView):
     model = Category
     extra_context = {
         'title': 'Наши вкусняши'
     }
-
-# def product(request, pk):
-#     catalog_item = Category.objects.get(pk=pk)
-#     context = {
-#         'object_list': Product.objects.filter(category_id=pk),
-#         'title': f'Наши вкусняши {catalog_item.name}'
-#     }
-#     return render(request, 'catalog/product_list.html', context)
 
 
 class ProductListView(ListView):
@@ -93,8 +67,6 @@ class ProductDetailView(DetailView):
 class ProductCreateView(CreateView):
     model = Product
     form_class = ProductForm
-    fields = ('name', 'category', 'description', 'picture', 'price',)
-    # success_url = reverse_lazy('catalog:products')
 
     def get_success_url(self):
         return reverse('catalog:products', args=[self.object.category_id])
@@ -103,7 +75,6 @@ class ProductCreateView(CreateView):
 class ProductUpdateView(UpdateView):
     model = Product
     form_class = ProductForm
-    # fields = ('name', 'category', 'description', 'picture', 'price', 'is_active')
     success_url = reverse_lazy('catalog:categories')
 
     def get_context_data(self, **kwargs):
@@ -128,4 +99,3 @@ class ProductUpdateView(UpdateView):
 class ProductDeleteView(DeleteView):
     model = Product
     success_url = reverse_lazy('catalog:categories')
-

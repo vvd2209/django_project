@@ -28,7 +28,27 @@
                         </tr>
                     </table>
                 </div>
-                <div class="card-footer"></div>
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Информация о версии товара
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <tr>
+                            <td>Название версии</td>
+                            <td>{{ object.version_name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Номер версии</td>
+                            <td>{{ object.version_number }}</td>
+                        </tr>
+                        <tr>
+                            <td>Признак текущей версии</td>
+                            <td>{{ object.is_active }}</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="col-6">
@@ -37,23 +57,6 @@
             {% else %}
             <img src="/media/products/Лйам.jpg" />
             {% endif %}
-        </div>
-        <div class="col-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">
-                        Информация о версии товара
-                    </h3>
-                </div>
-                <div class="card-body">
-                    <ul>
-                        {% for version in version %}
-                        <li>{{ version }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-                <div class="card-footer"></div>
-            </div>
         </div>
     </div>
 </div>

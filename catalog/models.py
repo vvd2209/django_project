@@ -1,9 +1,6 @@
 from django.db import models
-from django.urls import reverse
 
-# Create your models here.
-
-NULLABLE = {'blank': True, 'null': True} # **NULLABLE - необязательное поле для заполнения
+NULLABLE = {'blank': True, 'null': True}
 
 
 class Category(models.Model):
@@ -18,20 +15,18 @@ class Category(models.Model):
         verbose_name_plural = 'категории'
         ordering = ('name',)
 
-    # def get_absolute_url(self):
-    #     return reverse('catalog:products', kwargs={'pk':self.pk})
-
 
 class Product(models.Model):
     name = models.CharField(max_length=100, verbose_name='наименование')
     description = models.TextField(max_length=1000, verbose_name='описание')
-    picture = models.ImageField(upload_to='products/', verbose_name='изображение', **NULLABLE) # **NULLABLE - необязательное поле для заполнения
+    picture = models.ImageField(upload_to='products/', verbose_name='изображение', **NULLABLE)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='категория')
     price = models.IntegerField(verbose_name='цена за покупку')
     date_creation = models.DateField(auto_now_add=True, verbose_name='дата создания')
     date_last_modified = models.DateField(auto_now=True, verbose_name='дата последнего изменения')
 
     is_active = models.BooleanField(default=False, **NULLABLE)
+
     def __str__(self):
         return f'{self.name} {self.price}'
 
@@ -66,4 +61,3 @@ class Version(models.Model):
     class Meta:
         verbose_name = 'версия'
         verbose_name_plural = 'версии'
-        ordering = ('is_active',)
