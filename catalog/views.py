@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import inlineformset_factory
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
@@ -21,6 +22,7 @@ def contacts(request):
 
 
 class MainPageListView(ListView):
+    """ Контроллер главной страницы """
     model = Product
     template_name = 'catalog/main_page.html'
     extra_context = {
@@ -30,13 +32,15 @@ class MainPageListView(ListView):
 
 
 class CategoryListView(ListView):
+    """ Контроллер вывода всех категорий """
     model = Category
     extra_context = {
         'title': 'Наши вкусняши'
     }
 
 
-class ProductListView(ListView):
+class ProductListView(LoginRequiredMixin, ListView):
+    """ Контроллер вывода продуктов только авторизованным пользователям (LoginRequiredMixin) """
     model = Product
 
     def get_queryset(self):
@@ -61,6 +65,7 @@ class ProductListView(ListView):
 
 
 class ProductDetailView(DetailView):
+    """ Контроллер просмотра продукта """
     model = Product
 
     def get_context_data(self, **kwargs):
@@ -71,14 +76,23 @@ class ProductDetailView(DetailView):
 
 
 class ProductCreateView(CreateView):
+    """ Контроллер добавления продукта """
     model = Product
     form_class = ProductForm
 
     def get_success_url(self):
         return reverse('catalog:products', args=[self.object.category_id])
 
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.owner = self.request.user
+        self.object.save()
+
+        return super().form_valid(form)
+
 
 class ProductUpdateView(UpdateView):
+    """ Контроллер редактирования продукта """
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:categories')
@@ -103,5 +117,6 @@ class ProductUpdateView(UpdateView):
 
 
 class ProductDeleteView(DeleteView):
+    """ Контроллер удаления продукта """
     model = Product
     success_url = reverse_lazy('catalog:categories')
