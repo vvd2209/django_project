@@ -1,6 +1,6 @@
 from django.db import models
 
-NULLABLE = {'blank': True, 'null': True}
+from catalog.constants import NULLABLE
 
 
 class Category(models.Model):

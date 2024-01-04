@@ -30,6 +30,13 @@
                 <li><a href="{% url 'catalog:categories' %}" class="text-white">Каталог</a></li>
                 <li><a href="{% url 'catalog:contacts' %}" class="text-white">Контакты</a></li>
                 <li><a href="{% url 'blog:list' %}" class="text-white">Блог</a></li>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'users:profile' %}" class="btn btn-outline-primary">Профиль</a>
+                    <a href="{% url 'users:logout' %}" class="btn btn-outline-primary">Выйти</a>
+                {% else %}
+                    <a href="{% url 'users:login' %}" class="btn btn-outline-primary">Войти</a>
+                    <a href="{% url 'users:register' %}" class="btn btn-outline-primary">Регистрация</a>
+                {% endif %}
               </ul>
             </div>
           </div>
