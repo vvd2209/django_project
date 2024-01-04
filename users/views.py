@@ -13,25 +13,37 @@ from users.models import User
 
 
 class RegisterView(CreateView):
+    """ Контроллер регистрации пользователя """
     model = User
     form_class = UserRegisterForm
     template_name = 'users/register.html'
     success_url = reverse_lazy('users:verification')
 
     def form_valid(self, form):
+        """ Форма отправки кода подтверждения почты пользователя """
+        list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         if form.is_valid():
-            new_user = form.save()
+            email_verification = ''
+            for i in range(8):
+                rand_idx = random.randint(0, len(list)-1)
+                email_verification += str(rand_idx)
+
+            form.email_verification = email_verification
+            user = form.save()
+            user.email_verification = email_verification
             send_mail(
-                subject='Подтверждение регистрации',
-                message=f'Код {new_user.email_verification}',
+                subject='Поздравляем с регистрацией!',
+                message=f'Подтвердите вашу регистрацию, введите код подтверждения {user.email_verification}',
                 from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[new_user.email]
+                recipient_list=[user.email]
             )
-        return super().form_valid(form)
+            return super().form_valid(form)
 
 
 class VerificationView(TemplateView):
-    template_name = 'users/send_mail_code.html'
+    """ Контроллер верификации почты пользователя """
+    template_name = 'users/verification_email.html'
+    success_url = reverse_lazy('users:login')
 
     def post(self, request):
         email_verification = request.POST.get('email_verification')
@@ -42,15 +54,17 @@ class VerificationView(TemplateView):
             user_code.save()
             return redirect('users:login')
         else:
-            return redirect('users:verify_email_error')
+            return redirect('users:verification_error')
 
 
 class ErrorVerification(TemplateView):
+    """ Контроллер ошибочно введенного кода верификации"""
     template_name = 'users/verification_email_error.html'
-    success_url = reverse_lazy('users:send_mail_code')
+    success_url = reverse_lazy('users:verification')
 
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    """ Контроллер профиля пользователя """
     model = User
     form_class = UserProfileForm
     success_url = reverse_lazy('users:profile')
@@ -60,6 +74,7 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 
 
 def generate_new_password(request):
+    """ Контроллер генерации автоматически созданного пароля """
     new_password = ''.join([str(random.randint(0, 9)) for _ in range(12)])
     send_mail(
         subject='Вы сменили пароль',

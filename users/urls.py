@@ -12,7 +12,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
     path('register/', RegisterView.as_view(), name='register'),
     path('verification/', VerificationView.as_view(), name='verification'),
-    path('verification/error/', ErrorVerification.as_view(), name='verify_email_error'),
+    path('verification/error/', ErrorVerification.as_view(), name='verification_error'),
     path('profile/', ProfileUpdateView.as_view(), name='profile'),
     path('profile/genpassword/', generate_new_password, name='generate_new_password'),
 ]
