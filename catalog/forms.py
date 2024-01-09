@@ -38,6 +38,23 @@ class ProductForm(StyleForMixin, forms.ModelForm):
 
         return cleaned_data
 
+class ProductFormModerator(StyleForMixin, forms.ModelForm):
+    forbidden_words = ['казино', 'криптовалюта', 'крипта', 'биржа', 'дешево',
+                       'бесплатно', 'обман', 'полиция', 'радар']
+
+    class Meta:
+        model = Product
+        fields = ('description', 'category', 'is_active',)
+
+    def clean_description(self):
+        cleaned_data = self.cleaned_data['description']
+
+        for forbidden_word in forbidden_words:
+            if forbidden_word in cleaned_data.lower():
+                raise forms.ValidationError(f'Вы используете неразрешенное слово "{forbidden_word.title()}" '
+                                            f'Повторите ввод.')
+
+        return cleaned_data
 
 class VersionForm(StyleForMixin, forms.ModelForm):
     class Meta:

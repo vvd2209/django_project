@@ -1,13 +1,16 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.forms import inlineformset_factory
+from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 
-from catalog.forms import ProductForm, VersionForm
+from catalog.forms import ProductForm, VersionForm, ProductFormModerator
 from catalog.models import Category, Contacts, Product, Version
 
 
+@login_required
 def contacts(request):
     context = {
         'object_list': Contacts.objects.all(),
@@ -47,8 +50,13 @@ class ProductListView(LoginRequiredMixin, ListView):
         """
         Возвращает выборку товаров по номеру категории
         """
-        queryset = super().get_queryset()
-        queryset = queryset.filter(category_id=self.kwargs.get('pk'))
+        queryset = super().get_queryset().filter(
+            category_id=self.kwargs.get('pk'),
+        )
+
+        if not self.request.user.is_staff:
+            queryset = queryset.filter(owner=self.request.user)
+
         return queryset
 
     def get_context_data(self, *args, **kwargs):
@@ -56,7 +64,6 @@ class ProductListView(LoginRequiredMixin, ListView):
         Возвращает товары определенной категории,
         """
         context_data = super().get_context_data(*args, **kwargs)
-
         category_item = Category.objects.get(pk=self.kwargs.get('pk'))
         context_data['category_pk'] = category_item.pk,
         context_data['title'] = f'Наши вкусняши {category_item.name}'
@@ -75,10 +82,11 @@ class ProductDetailView(DetailView):
         return context
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     """ Контроллер добавления продукта """
     model = Product
     form_class = ProductForm
+    permission_required = 'catalog.add_product'
 
     def get_success_url(self):
         return reverse('catalog:products', args=[self.object.category_id])
@@ -91,11 +99,23 @@ class ProductCreateView(CreateView):
         return super().form_valid(form)
 
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     """ Контроллер редактирования продукта """
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:categories')
+
+    def get_form_class(self):
+        if self.request.user.groups.filter(name='Модератор').exists():
+            return ProductFormModerator
+        else:
+            return ProductForm
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.owner != self.request.user and not self.request.user.is_staff:
+            raise Http404
+        return self.object
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
