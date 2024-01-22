@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.core.cache import cache
 from django.forms import inlineformset_factory
 from django.http import Http404
 from django.shortcuts import render
@@ -8,6 +10,7 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView, D
 
 from catalog.forms import ProductForm, VersionForm, ProductFormModerator
 from catalog.models import Category, Contacts, Product, Version
+from catalog.services import get_categories_cache
 
 
 @login_required
@@ -30,7 +33,7 @@ class MainPageListView(ListView):
     template_name = 'catalog/main_page.html'
     extra_context = {
         'title': 'Bakery Market',
-        'object_list': Category.objects.all()[:4]
+        'object_list': get_categories_cache
     }
 
 
